@@ -8,8 +8,8 @@ public class tuiseki : MonoBehaviour
     public Transform target;
     private NavMeshAgent agent;
     private Transform enemy;
-    bool hit = false;
-    float downtime = 0;
+    bool inArea = false;
+    float time = 0;
 
     void Start()
     {
@@ -19,25 +19,28 @@ public class tuiseki : MonoBehaviour
 
     void Update()
     {
-        if (hit == false)
+        if(inArea == true)
         {
-            agent.destination = target.position;
+            if (time <= 10)
+            {
+                agent.destination = target.position;
+                time += Time.deltaTime;
+            }
+            else
+            {
+                inArea = false;
+                time = 0;
+                gameObject.transform.position = new Vector3(36,-61,-52);                
+            }
         }
+        Debug.Log(time);
     }
 
-    void OnCollisionStay(Collision other)
+    private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Player")
+        if(other.gameObject.tag == "Player")
         {
-            hit = true;
-        }
-    }
-
-    private void OnCollisionExit(Collision other)
-    {
-        if (other.gameObject.tag == "Player")
-        {
-            hit = false;
+            inArea = true;
         }
     }
 }
